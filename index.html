@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script
+      src="https://kit.fontawesome.com/c7a86d0e1c.js"
+      crossorigin="anonymous"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <main>
+      <div id="game-header">
+        <div>
+          <i class="fas fa-bomb"></i>
+          <p id="mine-count">0</p>
+        </div>
+
+        <div>
+          <i class="fas fa-clock"></i>
+          <p id="clock">
+            <span id="minutes">00</span>:<span id="seconds">00</span>
+          </p>
+        </div>
+      </div>
+
+      <div id="board"></div>
+
+      <div id="game-over-modal">
+        <div class="modal-container">
+          <span class="close">
+            <i class="fas fa-times"></i>
+          </span>
+          <h2 class="modal-header"></h2>
+          <p class="modal-text"></p>
+
+          <button id="reset-btn">Jogar de novo</button>
+        </div>
+      </div>
+      <!-- <button id="reset-btn">RESET</button> -->
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>
