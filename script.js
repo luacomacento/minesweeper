@@ -85,7 +85,6 @@ const placeMines = (initialSquare) => {
     gameInfo.minesLocation.push(string);
   }
   gameInfo.minesLocation.sort();
-  console.log(gameInfo.minesLocation);
 
   stopWatch = setInterval(countTime, 1000);
 };
@@ -181,7 +180,6 @@ const resetGame = (event, boardSize = gameInfo.boardSize, minesQuantity = gameIn
   document.getElementById('board').innerHTML = '';
   gameInfo.boardSize = boardSize;
   gameInfo.minesQuantity = minesQuantity;
-  console.log(boardSize);
   createBoard();
   hideModal();
   document.getElementById('minutes').textContent = '00';
@@ -209,7 +207,6 @@ board.addEventListener('contextmenu', (event) => {
     gameInfo.flagsQuantity--;
     event.target.parentElement.classList.remove('flagged');
     event.target.parentElement.innerHTML = '';
-    console.log(gameInfo.flagsQuantity);
   }
 
   else {
