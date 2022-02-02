@@ -172,6 +172,9 @@ const clickSquare = (event) => {
 };
 
 const resetGame = (event, boardSize = gameInfo.boardSize, minesQuantity = gameInfo.minesQuantity) => {
+  clearInterval(stopWatch);
+  seconds = 0;
+  minutes = 0;
   gameInfo.isGameOver = false;
   gameInfo.minesLocation = [];
   gameInfo.flagsQuantity = 0;
