@@ -6,6 +6,8 @@ const modalHeader = document.querySelector('.modal-header');
 const modalText = document.querySelector('.modal-text');
 const modalCloseBtn = document.querySelector('.modal-container .close');
 const mineCount = document.getElementById('mine-count');
+const easyBtn = document.getElementById('easy');
+const mediumBtn = document.getElementById('medium');
 
 // Stopwatch variables
 let stopWatch;
@@ -169,11 +171,14 @@ const clickSquare = (event) => {
     
 };
 
-const resetGame = () => {
+const resetGame = (event, boardSize = gameInfo.boardSize, minesQuantity = gameInfo.minesQuantity) => {
   gameInfo.isGameOver = false;
   gameInfo.minesLocation = [];
   gameInfo.flagsQuantity = 0;
   document.getElementById('board').innerHTML = '';
+  gameInfo.boardSize = boardSize;
+  gameInfo.minesQuantity = minesQuantity;
+  console.log(boardSize);
   createBoard();
   hideModal();
   document.getElementById('minutes').textContent = '00';
@@ -236,3 +241,6 @@ function countTime() {
     document.getElementById('seconds').textContent = seconds;
   }
 }
+
+easyBtn.addEventListener('click', (event) => resetGame(event, 9, 12));
+mediumBtn.addEventListener('click', (event) => resetGame(event, 16, 40));

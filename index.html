@@ -27,20 +27,27 @@
       </div>
 
       <div id="board"></div>
-
-      <div id="game-over-modal">
-        <div class="modal-container">
-          <span class="close">
-            <i class="fas fa-times"></i>
-          </span>
-          <h2 class="modal-header"></h2>
-          <p class="modal-text"></p>
-
-          <button id="reset-btn">Jogar de novo</button>
+      <!-- <button id="reset-btn">RESET</button> -->
+      <div id="new-game">
+        <h2>Novo jogo</h2>
+        <div>
+          <button id="easy" class="btn">Fácil</button>
+          <button id="medium" class="btn">Médio</button>
+          <!-- <button id="hard" class="btn">Difícil</button> -->
         </div>
       </div>
-      <!-- <button id="reset-btn">RESET</button> -->
     </main>
+    <div id="game-over-modal">
+      <div class="modal-container">
+        <span class="close">
+          <i class="fas fa-times"></i>
+        </span>
+        <h2 class="modal-header"></h2>
+        <p class="modal-text"></p>
+
+        <button id="reset-btn">Jogar de novo</button>
+      </div>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>
