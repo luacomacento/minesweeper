@@ -15,25 +15,25 @@ let seconds = 0;
 let minutes = 0;
 
 // Game info object.
-const gameInfo = {
+const game = {
   boardSize: 9,
   minesQty: 12,
   flagsQty: 0,
   minesLocation: [],
-  isGameOver: false,
+  isOver: false,
   adjacentBombs: {},
 };
 
 // Functions
-function displayMinutes() {
+const displayMinutes = () => {
   if (seconds <= 9) {
     document.getElementById('minutes').textContent = `0${minutes}`;
   } else {
     document.getElementById('minutes').textContent = minutes;
   }
-}
+};
 
-function countTime() {
+const countTime = () => {
   seconds++;
   if (seconds > 60) {
     seconds = 0;
@@ -45,7 +45,7 @@ function countTime() {
   } else {
     document.getElementById('seconds').textContent = seconds;
   }
-}
+};
 
 const startStopWatch = () => stopWatch = setInterval(countTime, 1000);
 
@@ -75,8 +75,8 @@ const handleGameLose = (clickedSquare) => {
   minutes = 0;
   clickedSquare.classList.add('bomb');
   clickedSquare.innerHTML = '<i class="fas fa-bomb"></i>';
-  gameInfo.isGameOver = true;
-  gameInfo.minesLocation.forEach((number) => {
+  game.isOver = true;
+  game.minesLocation.forEach((number) => {
     const current = document.getElementById(`square-${number}`);
     if (current !== clickSquare) {
       current.classList.add('bomb');
@@ -91,11 +91,11 @@ const handleGameWin = () => {
   clearInterval(stopWatch);
   seconds = 0;
   minutes = 0;
-  gameInfo.isGameOver = true;
+  game.isOver = true;
   setTimeout(() => displayModal('win'), 20);
 };
 
-const generateRandomNumber = () => Math.floor(Math.random() * (gameInfo.boardSize ** 2));
+const generateRandomNumber = () => Math.floor(Math.random() * (game.boardSize ** 2));
 
 const getAdjacentBlocks = (id) => {
   const initialId = (id).match(/\d+-\d+/)[0];
@@ -117,23 +117,23 @@ const placeMines = (initialSquare) => {
   const adjacentBlocks = getAdjacentBlocks(initialSquare.id);
   const initialId = (initialSquare.id).match(/\d+-\d+/)[0];
 
-  for (let i = 0; i < gameInfo.minesQty; i++) {
+  for (let i = 0; i < game.minesQty; i++) {
     let number = generateRandomNumber();
-    let row = Math.floor(number / gameInfo.boardSize);
-    let column = number % gameInfo.boardSize;
+    let row = Math.floor(number / game.boardSize);
+    let column = number % game.boardSize;
     let string = `${row}-${column}`;
 
-    while (gameInfo.minesLocation.includes(string) || string === initialId || adjacentBlocks.some((id) => id === string)) {
+    while (game.minesLocation.includes(string) || string === initialId || adjacentBlocks.some((id) => id === string)) {
       number = generateRandomNumber();
-      row = Math.floor(number / gameInfo.boardSize);
-      column = number % gameInfo.boardSize;
+      row = Math.floor(number / game.boardSize);
+      column = number % game.boardSize;
       string = `${row}-${column}`;
     }
-    gameInfo.minesLocation.push(string);
+    game.minesLocation.push(string);
   }
   document.querySelectorAll('.square').forEach((square) => {
     const numberOfBombs = countBombs(square.id);
-    gameInfo.adjacentBombs[square.id] = numberOfBombs;
+    game.adjacentBombs[square.id] = numberOfBombs;
   });
 
   startStopWatch();
@@ -141,11 +141,11 @@ const placeMines = (initialSquare) => {
 
 const createBoard = () => {
 
-  for (let rowIndex = 0; rowIndex < gameInfo.boardSize; rowIndex++) {
+  for (let rowIndex = 0; rowIndex < game.boardSize; rowIndex++) {
     const newRow = document.createElement('div');
     newRow.className = 'board-row';
     newRow.id = `row-${rowIndex}`;
-    for (let columnIndex = 0; columnIndex < gameInfo.boardSize; columnIndex++) {
+    for (let columnIndex = 0; columnIndex < game.boardSize; columnIndex++) {
       const newSquare = document.createElement('div');
       newSquare.classList.add('square', 'flagable');
       newSquare.id = `square-${rowIndex}-${columnIndex}`;
@@ -154,13 +154,13 @@ const createBoard = () => {
     }
     board.appendChild(newRow);
   }
-  mineCount.textContent = gameInfo.minesQty;
+  mineCount.textContent = game.minesQty;
 };
 
 const countBombs = (id) => {
   const testArray = getAdjacentBlocks(id);
   return testArray
-    .filter((tested) => gameInfo.minesLocation.includes(tested))
+    .filter((tested) => game.minesLocation.includes(tested))
     .length;
 };
 
@@ -168,12 +168,12 @@ const checkGameOver = (clickedSquare) => {
   const clickedId = clickedSquare.id.match(/\d+-\d+/)[0];
 
   // Game Lose :(
-  if (gameInfo.minesLocation.includes(clickedId)) {
+  if (game.minesLocation.includes(clickedId)) {
     handleGameLose(clickedSquare);
   }
 
   // Game Win!
-  if (document.querySelectorAll('.clicked').length === gameInfo.boardSize ** 2 - gameInfo.minesQty) {
+  if (document.querySelectorAll('.clicked').length === game.boardSize ** 2 - game.minesQty) {
     handleGameWin(clickedSquare);
   }
 };
@@ -185,11 +185,11 @@ const clickSquare = (event) => {
     if (event.target.classList.contains('flagged')) return;
 
     // Place initial mines;
-    const noMinesPlaced = !gameInfo.minesLocation.length;
+    const noMinesPlaced = !game.minesLocation.length;
     if (noMinesPlaced) placeMines(event.target);
 
     // Prevent any click if game is already over.
-    if (gameInfo.isGameOver) return;
+    if (game.isOver) return;
 
     // Click logic
     // Handle counting bombs
@@ -232,13 +232,13 @@ function openBlock(block) {
   testArray.forEach((testedId) => {
     const element = document.getElementById(`square-${testedId}`);
     if (element) {
-      if (gameInfo.adjacentBombs[`square-${testedId}`] === 0) {
+      if (game.adjacentBombs[`square-${testedId}`] === 0) {
         emptyBlocks.push(element);
       }
       else {
         element.classList.add('clicked');
         element.classList.remove('flagable');
-        element.textContent = gameInfo.adjacentBombs[`square-${testedId}`];
+        element.textContent = game.adjacentBombs[`square-${testedId}`];
       }
     }
   });
@@ -247,15 +247,15 @@ function openBlock(block) {
 }
 
 const resetGame = (
-  boardSize = gameInfo.boardSize,
-  minesQuantity = gameInfo.minesQty,
+  boardSize = game.boardSize,
+  minesQuantity = game.minesQty,
 ) => {
   clearStopWatch();
-  gameInfo.isGameOver = false;
-  gameInfo.minesLocation = [];
-  gameInfo.flagsQty = 0;
-  gameInfo.boardSize = boardSize;
-  gameInfo.minesQty = minesQuantity;
+  game.isOver = false;
+  game.minesLocation = [];
+  game.flagsQty = 0;
+  game.boardSize = boardSize;
+  game.minesQty = minesQuantity;
   document.getElementById('board').innerHTML = '';
 
   createBoard();
@@ -272,17 +272,17 @@ modalCloseBtn.addEventListener('click', hideModal);
 
 board.addEventListener('contextmenu', (event) => {
   event.preventDefault();
-  if (gameInfo.isGameOver || !gameInfo.minesLocation.length) return;
+  if (game.isOver || !game.minesLocation.length) return;
   if (!event.target.classList.contains('flagable')) return;
 
   if (event.target.classList.contains('flagged')) {
     event.target.innerHTML = '';
     event.target.classList.remove('flagged');
-    gameInfo.flagsQty -= 1;
+    game.flagsQty -= 1;
   }
 
   else if (event.target.classList.contains('fa-flag')) {
-    gameInfo.flagsQty--;
+    game.flagsQty--;
     event.target.parentElement.classList.remove('flagged');
     event.target.parentElement.innerHTML = '';
   }
@@ -290,12 +290,10 @@ board.addEventListener('contextmenu', (event) => {
   else {
     event.target.innerHTML = '<i class="fas fa-flag flagable"></i>';
     event.target.classList.add('flagged');
-    gameInfo.flagsQty += 1;
+    game.flagsQty += 1;
   }
 
-
-  mineCount.textContent = gameInfo.minesQty - gameInfo.flagsQty;
-
+  mineCount.textContent = game.minesQty - game.flagsQty;
 });
 
 easyBtn.addEventListener('click', () => resetGame(9, 12));
