@@ -73,7 +73,7 @@ const handleGameLose = (clickedSquare) => {
   clearInterval(stopWatch);
   seconds = 0;
   minutes = 0;
-  clickedSquare.classList.add('bomb');
+  clickedSquare.classList.add('bomb-clicked');
   clickedSquare.innerHTML = '<i class="fas fa-bomb"></i>';
   game.isOver = true;
   game.minesLocation.forEach((number) => {
@@ -81,7 +81,7 @@ const handleGameLose = (clickedSquare) => {
     if (current !== clickSquare) {
       current.classList.add('bomb');
       current.innerHTML = '<i class="fas fa-bomb"></i>';
-      current.style.opacity = '0.5';
+      // current.style.opacity = '0.5';
     }
   });
   setTimeout(() => displayModal('lose'), 20);

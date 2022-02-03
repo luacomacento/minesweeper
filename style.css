@@ -6,17 +6,30 @@
 
 body {
     font-family: sans-serif;
+
+    /* Dark theme */
+    background-color: rgb(30, 25, 36);
+    color: white;
 }
 
 .square {
     width: 2.5rem;
     height: 2.5rem;
     /* background-color: rgb(81, 39, 99); */
-    background-color: rgb(92, 92, 92);
+    /* background-color: rgb(92, 92, 92); */
+
+    /* Light theme */
+    background-color: rgb(160, 141, 182);
+
+    /* Dark theme */
+    background-color: rgb(96, 72, 122);
+
     display: flex;
     justify-content: center;
     align-items: center;
-    color: yellow;
+    /* color: yellow; */
+    color: rgb(255, 255, 140);
+    color: rgb(25, 13, 37);
     border-radius: 8px;
     /* transition: background-color 0.1s; */
 }
@@ -39,24 +52,43 @@ main {
 }
 
 .clicked {
-    background-color: rgb(205, 205, 205);
+    /* background-color: rgb(205, 205, 205); */
+    /* background-color: rgb(219, 212, 227); */
+    /* background-color: white; */
+
     font-weight: bold;
-    color: rgb(99, 99, 99);
+    /* color: rgb(99, 99, 99); */
+
+    /* Light theme */
+    background-color: white;
+    color: rgb(86, 66, 109);;
+
+    /* Dark theme */
+    color: white;
+    background-color: rgb(30, 25, 36);;
+    color: rgb(222, 210, 235);
 }
 
 .bomb {
-    background-color: rgb(198, 48, 48) !important;
+    background-color: rgb(97, 42, 42) !important;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 1.8rem;
-    color: white
+    color: white;
+    color: rgb(41, 0, 0);
+}
+
+.bomb-clicked {
+  background-color: rgb(177, 38, 38) !important;
+  color: rgb(65, 0, 0) !important;
 }
 
 #game-over-modal {
     display: none;
     position: absolute;
     background-color: white;
+    background-color: rgb(40, 40, 40);
     border-radius: 8px;
     text-align: center;
     top: 50%;
@@ -87,8 +119,11 @@ main {
 #reset-btn {
     padding: 16px;
     background-color: rgb(255, 255, 255);
+    background-color: rgb(40, 40, 40);
     border: 1px solid blue;
+    border: 1px solid rgb(222, 210, 235);
     color: blue;
+    color: rgb(222, 210, 235);
     text-transform: uppercase;
     border-radius: 8px;
     transition: 0.2s;
@@ -96,6 +131,8 @@ main {
 
 #reset-btn:hover {
     background-color: blue;
+    background-color: rgb(96, 72, 122);
+    border: 1px solid rgb(96, 72, 122);
     color: white;
     cursor: pointer;
 }
