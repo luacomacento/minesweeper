@@ -183,6 +183,7 @@ main {
   border-radius: 8px;
   transition: 0.2s;
   padding: 16px;
+  min-width: fit-content;
 }
 
 .btn:hover {
