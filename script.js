@@ -17,13 +17,46 @@ let minutes = 0;
 // Game info object.
 const gameInfo = {
   boardSize: 9,
-  minesQuantity: 12,
-  flagsQuantity: 0,
+  minesQty: 12,
+  flagsQty: 0,
   minesLocation: [],
   isGameOver: false,
+  adjacentBombs: {},
 };
 
 // Functions
+function displayMinutes() {
+  if (seconds <= 9) {
+    document.getElementById('minutes').textContent = `0${minutes}`;
+  } else {
+    document.getElementById('minutes').textContent = minutes;
+  }
+}
+
+function countTime() {
+  seconds++;
+  if (seconds > 60) {
+    seconds = 0;
+    minutes++;
+    displayMinutes();
+  }
+  if (seconds <= 9) {
+    document.getElementById('seconds').textContent = `0${seconds}`;
+  } else {
+    document.getElementById('seconds').textContent = seconds;
+  }
+}
+
+const startStopWatch = () => stopWatch = setInterval(countTime, 1000);
+
+const clearStopWatch = () => {
+  clearInterval(stopWatch);
+  seconds = 0;
+  minutes = 0;
+  document.getElementById('minutes').textContent = '00';
+  document.getElementById('seconds').textContent = '00';
+};
+
 const displayModal = (gameState) => {
   modalHeader.textContent = (gameState === 'win')
     ? 'Vitória!'
@@ -54,7 +87,7 @@ const handleGameLose = (clickedSquare) => {
   setTimeout(() => displayModal('lose'), 20);
 };
 
-const handleGameWin = (clickedSquare) => {
+const handleGameWin = () => {
   clearInterval(stopWatch);
   seconds = 0;
   minutes = 0;
@@ -64,19 +97,33 @@ const handleGameWin = (clickedSquare) => {
 
 const generateRandomNumber = () => Math.floor(Math.random() * (gameInfo.boardSize ** 2));
 
-const placeMines = (initialSquare) => {
-  const initialId = (initialSquare.id).match(/\d+-\d+/)[0];
+const getAdjacentBlocks = (id) => {
+  const initialId = (id).match(/\d+-\d+/)[0];
   const row = parseInt(initialId.split('-')[0]);
   const column = parseInt(initialId.split('-')[1]);
-  const testArray = [`${row - 1}-${column - 1}`, `${row - 1}-${column}`, `${row - 1}-${column + 1}`, `${row}-${column - 1}`, `${row}-${column + 1}`, `${row + 1}-${column - 1}`, `${row + 1}-${column}`, `${row + 1}-${column + 1}`];
+  return [
+    `${row - 1}-${column - 1}`,
+    `${row - 1}-${column}`,
+    `${row - 1}-${column + 1}`,
+    `${row}-${column - 1}`,
+    `${row}-${column + 1}`,
+    `${row + 1}-${column - 1}`,
+    `${row + 1}-${column}`,
+    `${row + 1}-${column + 1}`
+  ];
+};
 
-  for (let i = 0; i < gameInfo.minesQuantity; i++) {
+const placeMines = (initialSquare) => {
+  const adjacentBlocks = getAdjacentBlocks(initialSquare.id);
+  const initialId = (initialSquare.id).match(/\d+-\d+/)[0];
+
+  for (let i = 0; i < gameInfo.minesQty; i++) {
     let number = generateRandomNumber();
     let row = Math.floor(number / gameInfo.boardSize);
     let column = number % gameInfo.boardSize;
     let string = `${row}-${column}`;
 
-    while (gameInfo.minesLocation.includes(string) || string === initialId || testArray.some((id) => id === string)) {
+    while (gameInfo.minesLocation.includes(string) || string === initialId || adjacentBlocks.some((id) => id === string)) {
       number = generateRandomNumber();
       row = Math.floor(number / gameInfo.boardSize);
       column = number % gameInfo.boardSize;
@@ -84,13 +131,16 @@ const placeMines = (initialSquare) => {
     }
     gameInfo.minesLocation.push(string);
   }
-  gameInfo.minesLocation.sort();
+  document.querySelectorAll('.square').forEach((square) => {
+    const numberOfBombs = countBombs(square.id);
+    gameInfo.adjacentBombs[square.id] = numberOfBombs;
+  });
 
-  stopWatch = setInterval(countTime, 1000);
+  startStopWatch();
 };
 
 const createBoard = () => {
-  // let number = 1;
+
   for (let rowIndex = 0; rowIndex < gameInfo.boardSize; rowIndex++) {
     const newRow = document.createElement('div');
     newRow.className = 'board-row';
@@ -99,37 +149,34 @@ const createBoard = () => {
       const newSquare = document.createElement('div');
       newSquare.classList.add('square', 'flagable');
       newSquare.id = `square-${rowIndex}-${columnIndex}`;
-      // number += 1;
+
       newRow.appendChild(newSquare);
     }
     board.appendChild(newRow);
   }
-  mineCount.textContent = gameInfo.minesQuantity;
+  mineCount.textContent = gameInfo.minesQty;
 };
 
 const countBombs = (id) => {
-  const number = id.match(/\d+-\d+/)[0];
-  const row = parseInt(number.split('-')[0]);
-  const column = parseInt(number.split('-')[1]);
-  let numberOfMines = 0;
-  const testArray = [`${row - 1}-${column - 1}`, `${row - 1}-${column}`, `${row - 1}-${column + 1}`, `${row}-${column - 1}`, `${row}-${column + 1}`, `${row + 1}-${column - 1}`, `${row + 1}-${column}`, `${row + 1}-${column + 1}`];
-  testArray.forEach((tested) => {
-    if (gameInfo.minesLocation.includes(tested)) numberOfMines++;
-  });
-  return numberOfMines;
+  const testArray = getAdjacentBlocks(id);
+  return testArray
+    .filter((tested) => gameInfo.minesLocation.includes(tested))
+    .length;
 };
 
-function runThroughAdjacent(id) {
-  const number = id.match(/\d+-\d+/)[0];
-  const row = parseInt(number.split('-')[0]);
-  const column = parseInt(number.split('-')[1]);
-  const testArray = [`${row - 1}-${column - 1}`, `${row - 1}-${column}`, `${row - 1}-${column + 1}`, `${row}-${column - 1}`, `${row}-${column + 1}`, `${row + 1}-${column - 1}`, `${row + 1}-${column}`, `${row + 1}-${column + 1}`];
+const checkGameOver = (clickedSquare) => {
+  const clickedId = clickedSquare.id.match(/\d+-\d+/)[0];
 
-  testArray.forEach((testedId) => {
-    const element = document.getElementById(`square-${testedId}`);
-    if (element) element.click();
-  });
-}
+  // Game Lose :(
+  if (gameInfo.minesLocation.includes(clickedId)) {
+    handleGameLose(clickedSquare);
+  }
+
+  // Game Win!
+  if (document.querySelectorAll('.clicked').length === gameInfo.boardSize ** 2 - gameInfo.minesQty) {
+    handleGameWin(clickedSquare);
+  }
+};
 
 const clickSquare = (event) => {
 
@@ -149,47 +196,78 @@ const clickSquare = (event) => {
     const numberOfBombs = countBombs(event.target.id);
     event.target.innerText = numberOfBombs || '';
     
-    if (numberOfBombs === 0) {
-      runThroughAdjacent(event.target.id);
-    }
-    
+    if (numberOfBombs === 0) openBlocks(event.target);
+
     event.target.classList.add('clicked');
     event.target.classList.remove('flagable');
-    let clickedId = event.target.id.match(/\d+-\d+/)[0];
-
-    // Game Lose :(
-    if (gameInfo.minesLocation.includes(clickedId)) {
-      handleGameLose(event.target);
-    }
-
-    // Game Win!
-    if (document.querySelectorAll('.clicked').length === gameInfo.boardSize ** 2 - gameInfo.minesQuantity) {
-      handleGameWin(event.target);
-    }
+    checkGameOver(event.target);
   }
     
 };
 
-const resetGame = (event, boardSize = gameInfo.boardSize, minesQuantity = gameInfo.minesQuantity) => {
-  clearInterval(stopWatch);
-  seconds = 0;
-  minutes = 0;
+function openBlocks(startingBlock) {
+  let blocksToOpen = [startingBlock];
+
+  while (blocksToOpen.length) {
+    let nextBlock = blocksToOpen.pop();
+
+    if (!nextBlock.classList.contains('clicked')) {
+      let additionalBlocksToOpen = openBlock(nextBlock);
+
+      if (additionalBlocksToOpen.length) {
+        blocksToOpen = [...blocksToOpen, ...additionalBlocksToOpen];
+      }
+    }
+  }
+}
+
+function openBlock(block) {
+  const emptyBlocks = [];
+  
+  block.classList.add('clicked');
+  block.classList.remove('flagable');
+
+  const testArray = getAdjacentBlocks(block.id);
+
+  testArray.forEach((testedId) => {
+    const element = document.getElementById(`square-${testedId}`);
+    if (element) {
+      if (gameInfo.adjacentBombs[`square-${testedId}`] === 0) {
+        emptyBlocks.push(element);
+      }
+      else {
+        element.classList.add('clicked');
+        element.classList.remove('flagable');
+        element.textContent = gameInfo.adjacentBombs[`square-${testedId}`];
+      }
+    }
+  });
+
+  return emptyBlocks;
+}
+
+const resetGame = (
+  boardSize = gameInfo.boardSize,
+  minesQuantity = gameInfo.minesQty,
+) => {
+  clearStopWatch();
   gameInfo.isGameOver = false;
   gameInfo.minesLocation = [];
-  gameInfo.flagsQuantity = 0;
-  document.getElementById('board').innerHTML = '';
+  gameInfo.flagsQty = 0;
   gameInfo.boardSize = boardSize;
-  gameInfo.minesQuantity = minesQuantity;
+  gameInfo.minesQty = minesQuantity;
+  document.getElementById('board').innerHTML = '';
+
   createBoard();
   hideModal();
-  document.getElementById('minutes').textContent = '00';
-  document.getElementById('seconds').textContent = '00';
+
 };
 
+// Start the Game
 createBoard();
 
 document.body.addEventListener('click', clickSquare);
-resetBtn.addEventListener('click', resetGame);
+resetBtn.addEventListener('click', () => resetGame());
 modalCloseBtn.addEventListener('click', hideModal);
 
 board.addEventListener('contextmenu', (event) => {
@@ -200,11 +278,11 @@ board.addEventListener('contextmenu', (event) => {
   if (event.target.classList.contains('flagged')) {
     event.target.innerHTML = '';
     event.target.classList.remove('flagged');
-    gameInfo.flagsQuantity -= 1;
+    gameInfo.flagsQty -= 1;
   }
 
   else if (event.target.classList.contains('fa-flag')) {
-    gameInfo.flagsQuantity--;
+    gameInfo.flagsQty--;
     event.target.parentElement.classList.remove('flagged');
     event.target.parentElement.innerHTML = '';
   }
@@ -212,35 +290,13 @@ board.addEventListener('contextmenu', (event) => {
   else {
     event.target.innerHTML = '<i class="fas fa-flag flagable"></i>';
     event.target.classList.add('flagged');
-    gameInfo.flagsQuantity += 1;
+    gameInfo.flagsQty += 1;
   }
 
 
-  mineCount.textContent = gameInfo.minesQuantity - gameInfo.flagsQuantity;
+  mineCount.textContent = gameInfo.minesQty - gameInfo.flagsQty;
 
 });
 
-function displayMinutes() {
-  if (seconds <= 9) {
-    document.getElementById('minutes').textContent = `0${minutes}`;
-  } else {
-    document.getElementById('minutes').textContent = minutes;
-  }
-}
-
-function countTime() {
-  seconds++;
-  if (seconds > 60) {
-    seconds = 0;
-    minutes++;
-    displayMinutes();
-  }
-  if (seconds <= 9) {
-    document.getElementById('seconds').textContent = `0${seconds}`;
-  } else {
-    document.getElementById('seconds').textContent = seconds;
-  }
-}
-
-easyBtn.addEventListener('click', (event) => resetGame(event, 9, 12));
-mediumBtn.addEventListener('click', (event) => resetGame(event, 16, 40));
+easyBtn.addEventListener('click', () => resetGame(9, 12));
+mediumBtn.addEventListener('click', () => resetGame(16, 40));
