@@ -4,10 +4,12 @@ const board = document.getElementById('board');
 const modal = document.getElementById('game-over-modal');
 const modalHeader = document.querySelector('.modal-header');
 const modalText = document.querySelector('.modal-text');
-const modalCloseBtn = document.querySelector('.modal-container .close');
+const modalCloseBtn = document.querySelectorAll('.modal-container .close');
 const mineCount = document.getElementById('mine-count');
 const easyBtn = document.getElementById('easy');
 const mediumBtn = document.getElementById('medium');
+const newGameBtn = document.getElementById('new-game-btn');
+const newGameModal = document.getElementById('new-game-modal');
 
 // Stopwatch variables
 let stopWatch;
@@ -67,7 +69,10 @@ const displayModal = (gameState) => {
   modal.style.display = 'unset';
 };
 
-const hideModal = () => modal.style.display = 'none';
+const hideModal = () => {
+  modal.style.display = 'none';
+  newGameModal.style.display = 'none';
+};
 
 const handleGameLose = (clickedSquare) => {
   clearInterval(stopWatch);
@@ -81,7 +86,6 @@ const handleGameLose = (clickedSquare) => {
     if (current !== clickSquare) {
       current.classList.add('bomb');
       current.innerHTML = '<i class="fas fa-bomb"></i>';
-      // current.style.opacity = '0.5';
     }
   });
   setTimeout(() => displayModal('lose'), 20);
@@ -268,7 +272,7 @@ createBoard();
 
 document.body.addEventListener('click', clickSquare);
 resetBtn.addEventListener('click', () => resetGame());
-modalCloseBtn.addEventListener('click', hideModal);
+modalCloseBtn.forEach((modal) => modal.addEventListener('click', hideModal));
 
 board.addEventListener('contextmenu', (event) => {
   event.preventDefault();
@@ -296,5 +300,10 @@ board.addEventListener('contextmenu', (event) => {
   mineCount.textContent = game.minesQty - game.flagsQty;
 });
 
+function showNewGameModal() {
+  document.getElementById('new-game-modal').style.display = 'unset';
+}
+
 easyBtn.addEventListener('click', () => resetGame(9, 12));
 mediumBtn.addEventListener('click', () => resetGame(16, 40));
+newGameBtn.addEventListener('click', () => showNewGameModal());

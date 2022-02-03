@@ -35,7 +35,7 @@ body {
 }
 
 main {
-    margin: 32px auto;
+    margin: 132px auto 32px;
     width: fit-content;
     position: relative;
 }
@@ -44,6 +44,8 @@ main {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    margin: 0 auto;
+    width: fit-content;
 }
 
 .board-row {
@@ -138,11 +140,24 @@ main {
 }
 
 #game-header {
+  background-color: rgb(30, 25, 36);
   display: flex;
   font-size: 1.4rem;
   margin-bottom: 12px;
   justify-content: center;
-  gap: 32px;
+  align-items: center;
+  gap: 48px;
+  padding: 12px;
+  height: 72px;
+  /* box-shadow: 0 0 1em rgba(0, 0, 0, 0.6); */
+  width: 100%;
+  position: fixed;
+  z-index: 999;
+  top: 0;
+}
+
+#game-header h1 {
+  font-size: 1.8rem;
 }
 
 #game-header div {
@@ -160,14 +175,48 @@ main {
 }
 
 .btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid #333;
+  background-color: rgb(40, 40, 40);
+  border: 1px solid rgb(222, 210, 235);
+  color: white;
   text-transform: uppercase;
+  border-radius: 8px;
+  transition: 0.2s;
+  padding: 16px;
 }
 
 .btn:hover {
-  background-color: grey;
-  color: white;
   cursor: pointer;
+  border: 1px solid rgb(96, 72, 122);
+  background-color: rgb(96, 72, 122);
+}
+
+#new-game-btn {
+  background-color: rgb(30,25,36);
+  border: 1px solid rgb(222, 210, 235);
+  color: white;
+  text-transform: uppercase;
+  border-radius: 8px;
+  transition: 0.2s;
+  padding: 16px;
+}
+
+#new-game-btn:hover {
+  cursor: pointer;
+  border: 1px solid rgb(96, 72, 122);
+  background-color: rgb(96, 72, 122);
+}
+
+#new-game-modal {
+    display: none;
+    position: absolute;
+    background-color: white;
+    background-color: rgb(40, 40, 40);
+    border-radius: 8px;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    padding: 16px;
+    box-shadow: 0 0 1em rgba(0, 0, 0, 0.3);
+    width: fit-content;
 }
