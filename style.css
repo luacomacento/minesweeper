@@ -144,10 +144,11 @@ main {
   display: flex;
   font-size: 1.4rem;
   margin-bottom: 12px;
-  justify-content: center;
+  /* justify-content: center; */
+  justify-content: space-between;
   align-items: center;
   gap: 48px;
-  padding: 12px;
+  padding: 12px 32px;
   height: 72px;
   /* box-shadow: 0 0 1em rgba(0, 0, 0, 0.6); */
   width: 100%;
@@ -219,4 +220,55 @@ main {
     padding: 16px;
     box-shadow: 0 0 1em rgba(0, 0, 0, 0.3);
     width: fit-content;
+}
+
+#game-header h1 {
+  font-family: 'Press Start 2P', cursive;
+}
+
+#game-header div.header-items {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+#game-header .fa-question-circle {
+  order: 3;
+}
+
+#game-header .fa-cog {
+  order: 4;
+}
+
+#game-header .bomb-number {
+  order: 1;
+}
+
+#game-header .timer {
+  order: 2;
+}
+
+@media screen and (max-width: 768px) {
+  #game-header {
+    gap: 0;
+    row-gap: 16px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-top: 32px;
+  }
+
+  main {
+    margin-top: 172px;
+  }
+
+  #game-header h1 {
+    flex: 1;
+    text-align: center;
+  }
+
+  #game-header div.header-items {
+    gap: 0;
+    flex: 1;
+    justify-content: space-between;
+  }
 }
