@@ -15,8 +15,6 @@ body {
 .square {
     width: 2.5rem;
     height: 2.5rem;
-    /* background-color: rgb(81, 39, 99); */
-    /* background-color: rgb(92, 92, 92); */
 
     /* Light theme */
     background-color: rgb(160, 141, 182);
