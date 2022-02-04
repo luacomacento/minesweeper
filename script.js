@@ -1,16 +1,16 @@
 // Select elements that are going to be reused.
 const resetBtn = document.getElementById('reset-btn');
 const board = document.getElementById('board');
-const modal = document.getElementById('game-over-modal');
+const modal = document.querySelector('.modal');
+const closeModalBtn = document.querySelector('.modal-container .close');
 const modalHeader = document.querySelector('.modal-header');
 const modalText = document.querySelector('.modal-text');
-const modalCloseBtn = document.querySelectorAll('.modal-container .close');
 const mineCount = document.getElementById('mine-count');
+const difficultiesContainer = document.querySelector('.difficulties-container');
 const easyBtn = document.getElementById('easy');
 const mediumBtn = document.getElementById('medium');
 const hardBtn = document.getElementById('hard');
 const newGameBtn = document.getElementById('new-game-btn');
-const newGameModal = document.getElementById('new-game-modal');
 
 // Stopwatch variables
 let stopWatch;
@@ -62,19 +62,28 @@ const clearStopWatch = () => {
   document.getElementById('seconds').textContent = '00';
 };
 
-const displayModal = (gameState) => {
-  modalHeader.textContent = (gameState === 'win')
-    ? 'Vitória!'
-    : 'Derrota :(';
-  modalText.textContent = (gameState === 'win')
-    ? 'Parabéns! Você venceu!'
-    : 'Que pena! Você perdeu!';
+const displayModal = (type, gameState) => {
+  if (type === 'gameOver') {
+    modalHeader.textContent = (gameState === 'win')
+      ? 'Vitória!'
+      : 'Derrota :(';
+    modalText.textContent = (gameState === 'win')
+      ? 'Parabéns! Você venceu!'
+      : 'Que pena! Você perdeu!';
+    resetBtn.style.display = 'unset'; 
+  } else if (type === 'newGame') {
+    resetBtn.style.display = 'none'; 
+    modalHeader.textContent = 'Novo jogo';
+    modalText.textContent = 'Escolha uma dificuldade para iniciar:';
+    difficultiesContainer.style.display = 'flex';
+  }
   modal.style.display = 'unset';
 };
 
 const hideModal = () => {
   modal.style.display = 'none';
-  newGameModal.style.display = 'none';
+  resetBtn.style.display = 'none'; 
+  difficultiesContainer.style.display = 'none';
 };
 
 const handleGameLose = (clickedSquare) => {
@@ -91,7 +100,7 @@ const handleGameLose = (clickedSquare) => {
       current.innerHTML = '<i class="fas fa-bomb"></i>';
     }
   });
-  setTimeout(() => displayModal('lose'), 20);
+  setTimeout(() => displayModal('gameOver', 'lose'), 20);
 };
 
 const handleGameWin = () => {
@@ -99,10 +108,12 @@ const handleGameWin = () => {
   seconds = 0;
   minutes = 0;
   game.isOver = true;
-  setTimeout(() => displayModal('win'), 20);
+  setTimeout(() => displayModal('gameOver', 'win'), 20);
 };
 
-const generateRandomNumber = () => Math.floor(Math.random() * (game.rowSize * game.columnSize));
+const generateRandomNumber = () => {
+  return Math.floor(Math.random() * (game.rowSize * game.columnSize));
+};
 
 const getAdjacentBlocks = (id) => {
   const initialId = (id).match(/\d+-\d+/)[0];
@@ -147,7 +158,6 @@ const placeMines = (initialSquare) => {
 };
 
 const createBoard = () => {
-
   for (let rowIndex = 0; rowIndex < game.columnSize; rowIndex++) {
     const newRow = document.createElement('div');
     newRow.className = 'board-row';
@@ -162,6 +172,11 @@ const createBoard = () => {
     board.appendChild(newRow);
   }
   mineCount.textContent = game.minesQty;
+  if (board.offsetWidth - 48 < screen.availWidth) {
+    board.style.padding = '0px';
+  } else {
+    board.style.padding = '0 24px';
+  }
 };
 
 const countBombs = (id) => {
@@ -272,13 +287,18 @@ const resetGame = (
 
 };
 
-// Start the Game
+const checkDeviceOrientation = () => {
+  return window.outerWidth > window.outerHeight ? 'landscape' : 'portrait';
+};
+// End of functions declarations block.
+
+// Create the initial 9x9 board.
 createBoard();
 
+// This is the main event listener, which triggers the function to open blocks. I decided to put it inside the body, but it only executes any action if the clicked target is a block.
 document.body.addEventListener('click', clickSquare);
-resetBtn.addEventListener('click', () => resetGame());
-modalCloseBtn.forEach((modal) => modal.addEventListener('click', hideModal));
 
+// This event listener prevents the context menu to show when user right-clicks anything inside the board, then implements the logic of flagging the selected block.
 board.addEventListener('contextmenu', (event) => {
   event.preventDefault();
   if (game.isOver || !game.minesLocation.length) return;
@@ -305,22 +325,24 @@ board.addEventListener('contextmenu', (event) => {
   mineCount.textContent = game.minesQty - game.flagsQty;
 });
 
-const checkDeviceOrientation = () => {
-  return window.outerWidth > window.outerHeight ? 'landscape' : 'portrait';
-};
+// Close Modal button (the X that shows up on the modal) event listener.
+closeModalBtn.addEventListener('click', hideModal);
 
-function showNewGameModal() {
-  document.getElementById('new-game-modal').style.display = 'unset';
-}
+// Reset Game button (appears when game is over) event listener.
+resetBtn.addEventListener('click', () => resetGame());
 
-easyBtn.addEventListener('click', () => resetGame(9, 9, 12));
-mediumBtn.addEventListener('click', () => resetGame(16, 16, 40));
+// New Game button (placed on header) event listener.
 newGameBtn.addEventListener('click', () => {
   const deviceOrientation = checkDeviceOrientation();
   hardBtn.textContent = `Difícil (${deviceOrientation === 'landscape' ? '30x16' : '16x30'})`;
-  showNewGameModal();
+  displayModal('newGame');
 });
+
+// Difficulty buttons event listeners.
+easyBtn.addEventListener('click', () => resetGame(9, 9, 12));
+mediumBtn.addEventListener('click', () => resetGame(16, 16, 40));
 hardBtn.addEventListener('click', (event) => {
+  // This is the only difficulty button that has its own logic, based on the user orientation
   if (event.target.textContent === 'Difícil (30x16)') {
     resetGame(30, 16, 76);
   } else {
