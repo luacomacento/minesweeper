@@ -94,12 +94,12 @@ main {
     border-radius: 8px;
     text-align: center;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
+    left: 0;
+    right: 0;
+    transform: translate(0,-50%);
     padding: 16px;
     box-shadow: 0 0 1em rgba(0, 0, 0, 0.3);
     width: fit-content;
-    min-width: fit-content;
 }
 
 .modal-container {
@@ -184,8 +184,6 @@ main {
   border-radius: 8px;
   transition: 0.2s;
   padding: 16px;
-  width: fit-content;
-  min-width: fit-content;
 }
 
 .btn:hover {
@@ -211,8 +209,6 @@ main {
 }
 
 #new-game-modal {
-  width: fit-content;
-  min-width: fit-content;
     display: none;
     position: absolute;
     background-color: white;
@@ -220,11 +216,11 @@ main {
     border-radius: 8px;
     text-align: center;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
+    left: 0;
+    right: 0;
+    transform: translate(0,-50%);
     padding: 16px;
     box-shadow: 0 0 1em rgba(0, 0, 0, 0.3);
-    min-width: fit-content;
 }
 
 #game-header h1 {
