@@ -8,7 +8,6 @@ const modalCloseBtn = document.querySelectorAll('.modal-container .close');
 const mineCount = document.getElementById('mine-count');
 const easyBtn = document.getElementById('easy');
 const mediumBtn = document.getElementById('medium');
-const hardBtn = document.getElementById('hard');
 const newGameBtn = document.getElementById('new-game-btn');
 const newGameModal = document.getElementById('new-game-modal');
 
@@ -102,7 +101,7 @@ const handleGameWin = () => {
   setTimeout(() => displayModal('win'), 20);
 };
 
-const generateRandomNumber = () => Math.floor(Math.random() * (game.rowSize * game.columnSize));
+const generateRandomNumber = () => Math.floor(Math.random() * (game.boardSize ** 2));
 
 const getAdjacentBlocks = (id) => {
   const initialId = (id).match(/\d+-\d+/)[0];
@@ -126,14 +125,14 @@ const placeMines = (initialSquare) => {
 
   for (let i = 0; i < game.minesQty; i++) {
     let number = generateRandomNumber();
-    let row = Math.floor(number / game.rowSize);
-    let column = number % game.rowSize;
+    let row = Math.floor(number / game.boardSize);
+    let column = number % game.boardSize;
     let string = `${row}-${column}`;
 
     while (game.minesLocation.includes(string) || string === initialId || adjacentBlocks.some((id) => id === string)) {
       number = generateRandomNumber();
-      row = Math.floor(number / game.rowSize);
-      column = number % game.rowSize;
+      row = Math.floor(number / game.boardSize);
+      column = number % game.boardSize;
       string = `${row}-${column}`;
     }
     game.minesLocation.push(string);
@@ -148,11 +147,11 @@ const placeMines = (initialSquare) => {
 
 const createBoard = () => {
 
-  for (let rowIndex = 0; rowIndex < game.columnSize; rowIndex++) {
+  for (let rowIndex = 0; rowIndex < game.boardSize; rowIndex++) {
     const newRow = document.createElement('div');
     newRow.className = 'board-row';
     newRow.id = `row-${rowIndex}`;
-    for (let columnIndex = 0; columnIndex < game.rowSize; columnIndex++) {
+    for (let columnIndex = 0; columnIndex < game.boardSize; columnIndex++) {
       const newSquare = document.createElement('div');
       newSquare.classList.add('square', 'flagable');
       newSquare.id = `square-${rowIndex}-${columnIndex}`;
@@ -180,7 +179,7 @@ const checkGameOver = (clickedSquare) => {
   }
 
   // Game Win!
-  if (document.querySelectorAll('.clicked').length === game.rowSize * game.columnSize - game.minesQty) {
+  if (document.querySelectorAll('.clicked').length === game.boardSize ** 2 - game.minesQty) {
     handleGameWin(clickedSquare);
   }
 };
@@ -254,16 +253,14 @@ function openBlock(block) {
 }
 
 const resetGame = (
-  rowSize = game.rowSize,
-  columnSize = game.columnSize,
+  boardSize = game.boardSize,
   minesQuantity = game.minesQty,
 ) => {
   clearStopWatch();
   game.isOver = false;
   game.minesLocation = [];
   game.flagsQty = 0;
-  game.rowSize = rowSize;
-  game.columnSize = columnSize;
+  game.boardSize = boardSize;
   game.minesQty = minesQuantity;
   document.getElementById('board').innerHTML = '';
 
@@ -313,17 +310,11 @@ function showNewGameModal() {
   document.getElementById('new-game-modal').style.display = 'unset';
 }
 
-easyBtn.addEventListener('click', () => resetGame(9, 9, 12));
-mediumBtn.addEventListener('click', () => resetGame(16, 16, 40));
+easyBtn.addEventListener('click', () => resetGame(9, 12));
+mediumBtn.addEventListener('click', () => resetGame(16, 40));
 newGameBtn.addEventListener('click', () => {
   const deviceOrientation = checkDeviceOrientation();
+  const hardBtn = document.getElementById('hard');
   hardBtn.textContent = `Difícil (${deviceOrientation === 'landscape' ? '30x16' : '16x30'})`;
   showNewGameModal();
-});
-hardBtn.addEventListener('click', (event) => {
-  if (event.target.textContent === 'Difícil (30x16)') {
-    resetGame(30, 16, 76);
-  } else {
-    resetGame(16, 30, 76);
-  }
 });
