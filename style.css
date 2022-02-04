@@ -149,7 +149,7 @@ main {
   align-items: center;
   gap: 48px;
   padding: 12px 32px;
-  height: 72px;
+  /* height: 72px; */
   /* box-shadow: 0 0 1em rgba(0, 0, 0, 0.6); */
   width: 100%;
   position: fixed;
