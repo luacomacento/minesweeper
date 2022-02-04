@@ -44,6 +44,7 @@ main {
     gap: 2px;
     margin: 0 auto;
     width: fit-content;
+    padding: 0 24px;
 }
 
 .board-row {
