@@ -87,7 +87,7 @@ main {
 
 #game-over-modal {
     display: none;
-    position: absolute;
+    position: fixed;
     background-color: white;
     background-color: rgb(40, 40, 40);
     border-radius: 8px;
@@ -210,7 +210,7 @@ main {
 
 #new-game-modal {
     display: none;
-    position: absolute;
+    position: fixed;
     background-color: white;
     background-color: rgb(40, 40, 40);
     border-radius: 8px;
