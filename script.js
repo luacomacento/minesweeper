@@ -89,6 +89,10 @@ const hideModal = () => {
   difficultiesContainer.style.display = 'none';
 };
 
+const displayInfoModal = () => {
+  infoModal.style.display = 'unset';
+};
+
 const handleGameLose = (clickedSquare) => {
   clearInterval(stopWatch);
   seconds = 0;
@@ -358,9 +362,5 @@ hardBtn.addEventListener('click', (event) => {
     resetGame(16, 30, 76);
   }
 });
-
-function displayInfoModal() {
-  infoModal.style.display = 'unset';
-}
 
 infoBtn.addEventListener('click', displayInfoModal);
