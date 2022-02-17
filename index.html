@@ -37,7 +37,7 @@
       <div id="board"></div>
     </main>
 
-    <div class="modal">
+    <div id="game-modal" class="modal">
       <div class="modal-container">
         <span class="close">
           <i class="fas fa-times"></i>
@@ -50,6 +50,18 @@
           <button id="medium" class="btn">Médio (16x16)</button>
           <button id="hard" class="btn">Difícil (30x16)</button>
         </div>
+      </div>
+    </div>
+
+    <div id="info-modal" class="modal">
+      <div class="modal-container">
+        <span class="close">
+          <i class="fas fa-times"></i>
+        </span>
+        <h2 class="modal-header">Sobre o projeto</h2>
+        <p class="modal-text"></p>
+        <p>Projeto desenvolvido em JavaScript por <a href="https://github.com/luacomacento">Luá Octaviano</a>.</p>
+        <p>Todos os direitos reservados.</p>
       </div>
     </div>
     <script src="script.js"></script>

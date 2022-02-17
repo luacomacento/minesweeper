@@ -1,16 +1,18 @@
 // Select elements that are going to be reused.
 const resetBtn = document.getElementById('reset-btn');
 const board = document.getElementById('board');
-const modal = document.querySelector('.modal');
-const closeModalBtn = document.querySelector('.modal-container .close');
-const modalHeader = document.querySelector('.modal-header');
-const modalText = document.querySelector('.modal-text');
+const modal = document.getElementById('game-modal');
+const closeModalBtns = document.querySelectorAll('.modal-container .close');
+const modalHeader = document.querySelector('#game-modal .modal-header');
+const modalText = document.querySelector('#game-modal .modal-text');
 const mineCount = document.getElementById('mine-count');
 const difficultiesContainer = document.querySelector('.difficulties-container');
 const easyBtn = document.getElementById('easy');
 const mediumBtn = document.getElementById('medium');
 const hardBtn = document.getElementById('hard');
 const newGameBtn = document.getElementById('new-game-btn');
+const infoBtn = document.querySelector('.fa-question-circle');
+const infoModal = document.getElementById('info-modal');
 
 // Stopwatch variables
 let stopWatch;
@@ -70,7 +72,7 @@ const displayModal = (type, gameState) => {
     modalText.textContent = (gameState === 'win')
       ? 'Parabéns! Você venceu!'
       : 'Que pena! Você perdeu!';
-    resetBtn.style.display = 'unset'; 
+    resetBtn.style.display = 'unset';
   } else if (type === 'newGame') {
     resetBtn.style.display = 'none'; 
     modalHeader.textContent = 'Novo jogo';
@@ -82,6 +84,7 @@ const displayModal = (type, gameState) => {
 
 const hideModal = () => {
   modal.style.display = 'none';
+  infoModal.style.display = 'none';
   resetBtn.style.display = 'none'; 
   difficultiesContainer.style.display = 'none';
 };
@@ -200,50 +203,7 @@ const checkGameOver = (clickedSquare) => {
   }
 };
 
-const clickSquare = (event) => {
-
-  if (event.target.classList.contains('square') && !event.target.classList.contains('clicked')) {
-
-    if (event.target.classList.contains('flagged')) return;
-
-    // Place initial mines;
-    const noMinesPlaced = !game.minesLocation.length;
-    if (noMinesPlaced) placeMines(event.target);
-
-    // Prevent any click if game is already over.
-    if (game.isOver) return;
-
-    // Click logic
-    // Handle counting bombs
-    const numberOfBombs = countBombs(event.target.id);
-    event.target.innerText = numberOfBombs || '';
-    
-    if (numberOfBombs === 0) openBlocks(event.target);
-
-    event.target.classList.add('clicked');
-    event.target.classList.remove('flagable');
-    checkGameOver(event.target);
-  }
-    
-};
-
-function openBlocks(startingBlock) {
-  let blocksToOpen = [startingBlock];
-
-  while (blocksToOpen.length) {
-    let nextBlock = blocksToOpen.pop();
-
-    if (!nextBlock.classList.contains('clicked')) {
-      let additionalBlocksToOpen = openBlock(nextBlock);
-
-      if (additionalBlocksToOpen.length) {
-        blocksToOpen = [...blocksToOpen, ...additionalBlocksToOpen];
-      }
-    }
-  }
-}
-
-function openBlock(block) {
+const openBlock = (block) => {
   const emptyBlocks = [];
   
   block.classList.add('clicked');
@@ -266,7 +226,56 @@ function openBlock(block) {
   });
 
   return emptyBlocks;
-}
+};
+
+// The logic of the following function came from a question in StackOverFlow.
+// The previous solution had an issue with stack size, and doing this way fixes it.
+// Source: https://stackoverflow.com/questions/59715599/how-to-fix-maximum-call-stack-size-exceeded-in-minesweeper#:~:text=edited%20Jan%2018%2C%202020%20at%2014%3A52
+const handleEmpty = (startingBlock) => {
+  let blocksToOpen = [startingBlock];
+
+  while (blocksToOpen.length) {
+    let nextBlock = blocksToOpen.pop();
+
+    if (!nextBlock.classList.contains('clicked')) {
+      let additionalBlocksToOpen = openBlock(nextBlock);
+
+      if (additionalBlocksToOpen.length) {
+        blocksToOpen = [...blocksToOpen, ...additionalBlocksToOpen];
+      }
+    }
+  }
+};
+
+const clickSquare = (event) => {
+
+  if (event.target.classList.contains('square') && !event.target.classList.contains('clicked')) {
+
+    if (event.target.classList.contains('flagged')) return;
+
+    // Place initial mines;
+    const noMinesPlaced = !game.minesLocation.length;
+    if (noMinesPlaced) placeMines(event.target);
+
+    // Prevent any click if game is already over.
+    if (game.isOver) return;
+
+    // Click logic
+    // Handle counting bombs
+    const numberOfBombs = countBombs(event.target.id);
+    event.target.innerText = numberOfBombs || '';
+    
+    const id = event.target.id.match(/\d+-\d+/)[0];
+    if (numberOfBombs === 0 && !game.minesLocation.includes(id)) {
+      handleEmpty(event.target);
+    }
+
+    event.target.classList.add('clicked');
+    event.target.classList.remove('flagable');
+    checkGameOver(event.target);
+  }
+    
+};
 
 const resetGame = (
   rowSize = game.rowSize,
@@ -326,7 +335,7 @@ board.addEventListener('contextmenu', (event) => {
 });
 
 // Close Modal button (the X that shows up on the modal) event listener.
-closeModalBtn.addEventListener('click', hideModal);
+closeModalBtns.forEach((btn) => btn.addEventListener('click', hideModal));
 
 // Reset Game button (appears when game is over) event listener.
 resetBtn.addEventListener('click', () => resetGame());
@@ -349,3 +358,9 @@ hardBtn.addEventListener('click', (event) => {
     resetGame(16, 30, 76);
   }
 });
+
+function displayInfoModal() {
+  infoModal.style.display = 'unset';
+}
+
+infoBtn.addEventListener('click', displayInfoModal);

@@ -265,3 +265,24 @@ main {
   flex-direction: column;
   gap: 16px;
 }
+
+#info-modal {
+  display: none;
+}
+
+#info-modal .modal-container {
+  gap: 12px;
+}
+
+#info-modal a {
+  color:rgb(238, 221, 255);
+  text-decoration: none;
+}
+
+#info-modal a:hover {
+  color:rgb(200, 152, 255);
+}
+
+.fa-question-circle {
+  cursor: pointer;
+}
