@@ -199,6 +199,7 @@ const checkGameOver = (clickedSquare) => {
   // Game Lose :(
   if (game.minesLocation.includes(clickedId)) {
     handleGameLose(clickedSquare);
+    return;
   }
 
   // Game Win!
